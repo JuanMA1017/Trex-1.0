@@ -68,16 +68,16 @@ function draw (){
   textSize(15);
   text("Score "+score, 20, 12);
   if(gamestate===1){
-    piso.velocityX=-10;
-    if(score%100===0 && score>0){
+    piso.velocityX=-(10+2*score/1000);
+    if(score%1000===0 && score>0){
       sonchp.play();
     }
-    score=score+Math.round(frameCount%1===0);
+    score=score+Math.round((frameCount%1===0)*10);
     if(keyDown("space")&& Trex.y>=150){
       sonjump.play();
-      Trex.velocityY=-10;
+      Trex.velocityY=-15;
     }
-    Trex.velocityY+=0.5;
+    Trex.velocityY+=1;
     if(obstaculosg.isTouching(Trex)){
       sondie.play();
       score=0;
@@ -85,6 +85,14 @@ function draw (){
     }
     if(piso.x<0){
       piso.x=30;
+    }
+    if(score>=30000){
+      piso.destroy();
+      pisoinv.destroy();
+      obstaculosg.destroyEach();
+    }
+    if(Trex.y>=300){
+      gamestate=0;
     }
     clima();
     obstaculos();
@@ -100,12 +108,14 @@ function draw (){
     gameover.depth+=2;
     reset.visible=true;
     reset.depth+=3;
+    Trex.velocityY=0;
       if(mousePressedOver(reset)){
         gameover.visible=false;
         reset.visible=false;
         nubes.destroyEach();
         obstaculosg.destroyEach();
-        Trex.changeAnimation("Trexrunning", imgTrex);
+        setup();
+        obstaculos();
         gamestate=1;
       }
   }
@@ -118,7 +128,7 @@ function clima (){
     nube.addAnimation("Nube", imgnube);
     nube.scale=0.4;
     nube.lifetime=65;
-    nube.velocityX=-13;
+    nube.velocityX=-(13+2*score/1000);
     nube.y=Math.round(random(30, 75));
     gameover,depth=reset.depth;
     Trex.depth=gameover.depth;
@@ -132,7 +142,7 @@ function obstaculos (){
   if(frameCount%50===0){
     var obstacle;
     obstacle=createSprite(600, 160, 5, 5);
-    obstacle.velocityX=-15;
+    obstacle.velocityX=-(15+2*score/1000);
     var obsr;
     obsr=Math.round(random(1, 6));
     switch(obsr){
